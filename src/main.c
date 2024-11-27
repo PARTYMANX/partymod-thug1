@@ -56,6 +56,62 @@ void patchPlaylistShuffle() {
 	}
 }*/
 
+// 00569081
+float clampedAcos(float in) {
+	float (*orig_acos)(float) = 0x005f88d0;
+
+	if (in > 1.0f) {
+		in = 1.0f;
+	} else if (in < -1.0f) {
+		in = -1.0f;
+	}
+
+	return orig_acos(in);
+}
+
+double ledgeWarpFix(double n) {
+	//printf("DOING LEDGE WARP FIX\n");
+	//double (__cdecl *orig_acos)(double) = (void *)0x005f88d0;
+
+	__asm {
+		sub esp,0x08
+		fst qword ptr [esp - 0x08]
+
+		ftst
+		jl negative
+		fld1
+		fcom
+		fstp st(0)
+		jle end
+		fstp st(0)
+		fld1
+		jmp end
+	negative:
+		fchs
+		fld1
+		fcom
+		fstp st(0)
+		fchs
+		jle end
+		fstp st(0)
+		fld1
+		fchs
+	end:
+		
+		add esp,0x08
+
+	}
+
+	callFunc(0x005f88d0);
+
+	//return orig_acos(n);
+}
+
+void patchSnapDown() {
+	patchCall(0x00569081, ledgeWarpFix);
+	patchCall(0x005746fb, ledgeWarpFix);
+}
+
 uint32_t rng_seed = 0;
 
 void handleQuitEvent(SDL_Event *e) {
@@ -107,7 +163,7 @@ void initPatch() {
 
 	log_printf(LL_INFO, "Patch Initialized\n");
 
-	//patchOnlineService();
+	patchOnlineService();
 	patchButtonGlyphs();
 
 	loadGfxSettings();
@@ -174,9 +230,10 @@ __declspec(dllexport) BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, L
 			patchEventHandler();
 			patchWindow();
 			patchInput();
-			//patchGfx();
+			patchGfx();
 			patchScriptHook();
 			patchPlaylistShuffle();
+			patchSnapDown();
 
 			break;
 

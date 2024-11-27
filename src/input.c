@@ -483,6 +483,8 @@ uint8_t isInParkEditor() {
 	}
 }
 
+uint8_t prev_in_menu = 0;
+
 void pollKeyboard(device *dev) {
 	dev->isValid = 1;
 	dev->isPluggedIn = 1;
@@ -490,12 +492,21 @@ void pollKeyboard(device *dev) {
 	uint8_t *keyboardState = SDL_GetKeyboardState(NULL);
 	uint8_t isInMenu = *addr_isInMenu && !isInParkEditor();
 
+	if (prev_in_menu != isInMenu) {
+		prev_in_menu = isInMenu;
+		printf("IN MENU: %d\n", isInMenu);
+	}
+
 	// to prevent esc double-pressing on menu transitions, process its state here.  
 	// escState = 1 means esc was pressed in menu, 2 means pressed out of menu, 0 is unpressed
 	if (keyboardState[SDL_SCANCODE_ESCAPE] && !escState) {
 		escState = (isInMenu) ? 1 : 2;
 	} else if (!keyboardState[SDL_SCANCODE_ESCAPE]) {
 		escState = 0;
+	}
+
+	if (*addr_isKeyboardOnScreen) {
+		return;
 	}
 
 	// buttons
@@ -622,11 +633,6 @@ void pollKeyboard(device *dev) {
 	}
 }
 
-// returns 1 if a text entry prompt is on-screen so that keybinds don't interfere with text entry confirmation/cancellation
-uint8_t isKeyboardTyping() {
-	return *addr_isKeyboardOnScreen;
-}
-
 void __fastcall processController(device *dev, void *pad, device *also_dev) {
 	// cheating:
 	// replace type with index
@@ -687,9 +693,7 @@ void __fastcall processController(device *dev, void *pad, device *also_dev) {
 		dev->isValid = 1;
 		dev->isPluggedIn = 1;
 
-		if (!isKeyboardTyping()) {
-			pollKeyboard(dev);
-		}
+		pollKeyboard(dev);
 	}
 	
 	if (dev->port < MAX_PLAYERS) {

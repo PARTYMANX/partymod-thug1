@@ -16,12 +16,12 @@ uint32_t patchSize = 0;
 
 size_t validinput_sz = 1;
 uint32_t validinput_data[] = {
-	0xa8142d3a,
+	0x3be3f4ac,
 };
 
 size_t validoutput_sz = 1;
 uint32_t validoutput_data[] = {
-	0xbaf9922e,
+	0x66585f4a,
 };
 
 uint8_t contains_crc(uint32_t *list, size_t sz, uint32_t val) {
@@ -36,7 +36,7 @@ uint8_t contains_crc(uint32_t *list, size_t sz, uint32_t val) {
 
 int main(int argc, char **argv) {
 	// open thaw.exe and dump contents
-	FILE *f = fopen("THUG2.exe", "rb");
+	FILE *f = fopen("THUG.exe", "rb");
 
 	if (f) {
 		// get file length
@@ -44,26 +44,26 @@ int main(int argc, char **argv) {
 		size_t filesize = ftell(f);
 		fseek(f, 0, SEEK_SET);
 
-		if (filesize == 2695168) {
+		if (filesize == 2727936) {
 			patchData = gpatchData;
 			patchSize = gpatchSize;
 		} else {
 			printf("This executable is unsupported! (size = %d)\n", filesize);
-			printf("Make sure THUG2 US version is installed\n");
+			printf("Make sure THUG1 is installed\n");
 			goto end;
 		}
 
 		uint8_t *buffer = malloc(filesize);
 
 		if (buffer) {
-			printf("Patching THUG2.exe\n");
+			printf("Patching THUG.exe\n");
 			fread(buffer, 1, filesize, f);
 
 			// check input crc (not using the one in the bps due to multiple valid executables)
 			uint32_t inputcrc = crc32(buffer, filesize);
 			if (!contains_crc(validinput_data, validinput_sz, inputcrc)) {
 				printf("INPUT CRC DOES NOT MATCH EXPECTED: %08x\n", inputcrc);
-				printf("Make sure THUG2 US version is installed\n");
+				printf("Make sure THUG1 is installed\n");
 				//printf("Patch Failed!\n");
 			}
 
@@ -81,28 +81,28 @@ int main(int argc, char **argv) {
 			uint32_t outputcrc = crc32(patchedBuffer, patchedLen);
 			if (!contains_crc(validoutput_data, validoutput_sz, outputcrc)) {
 				printf("OUTPUT CRC DOES NOT MATCH EXPECTED: %08x\n", outputcrc);
-				printf("Make sure THUG2 US version is installed\n");
-				printf("Output may not work!");
+				printf("Make sure THUG1 is installed\n");
+				printf("Output may not work!\n");
 				//printf("Patch Failed!\n");
 
 				//goto end;
 			}
 
 			// write to THAWPM.exe
-			printf("Creating THUG2PM.exe\n");
-			FILE *fout = fopen("THUG2PM.exe", "wb");
+			printf("Creating THUGPM.exe\n");
+			FILE *fout = fopen("THUGPM.exe", "wb");
 			if (fout) {
 				fwrite(patchedBuffer, 1, patchedLen, fout);
 				fclose(fout);
 				printf("Patch Successful!\n");
 			} else {
-				printf("Failed to create THUG2PM.exe: %s\n", strerror(errno));
+				printf("Failed to create THUGPM.exe: %s\n", strerror(errno));
 			}
 		} else {
 			printf("Failed to allocate file buffer!\n");
 		}
 	} else {
-		printf("FAILED TO OPEN EXECUTABLE %s: %s\n", "THUG2.exe", strerror(errno));
+		printf("FAILED TO OPEN EXECUTABLE %s: %s\n", "THUG.exe", strerror(errno));
 	}
 
 end:

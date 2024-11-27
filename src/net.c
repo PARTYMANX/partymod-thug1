@@ -22,46 +22,46 @@ void patchOnlineService() {
 
 	// gamestats.gamespy.com
 	char *gamestats = allocOnlineServiceString("gamestats.%s", url);
-	patchDWord(0x0054dd13 + 1, gamestats);
-	patchDWord(0x006025d8 + 1, gamestats);
-	patchDWord(0x00602618 + 1, gamestats);
-	patchDWord(0x00602650 + 2, gamestats);
+	patchDWord(0x004dcbdd + 1, gamestats);
+	patchDWord(0x005d2128 + 1, gamestats);
+	patchDWord(0x005d2168 + 1, gamestats);
+	patchDWord(0x005d21a0 + 2, gamestats);
 
 	// %s.available.gamespy.com
 	char *available = allocOnlineServiceString("%%s.available.%s", url);
-	patchDWord(0x005f86dd + 1, available);
+	patchDWord(0x005c82fd + 1, available);
 
 	// %s.master.gamespy.com
 	char *master = allocOnlineServiceString("%%s.master.%s", url);
-	patchDWord(0x005fb03b + 1, master);
+	patchDWord(0x005cac5b + 1, master);
 
 	// natneg2.gamespy.com
 	char *natneg2 = allocOnlineServiceString("natneg2.%s", url);
-	patchDWord(0x0068e380, natneg2);
+	patchDWord(0x005cbc6b, natneg2);
 
 	// natneg1.gamespy.com
 	char *natneg1 = allocOnlineServiceString("natneg1.%s", url);
-	patchDWord(0x0068e37c, natneg1);
+	patchDWord(0x005cbc3a, natneg1);
 
 	// http://motd.gamespy.com/motd/motd.asp?userid=%d&productid=%d&versionuniqueid=%s&distid=%d&uniqueid=%s&gamename=%s
-	char *motd = allocOnlineServiceString("http://motd.%s/motd/motd.asp?userid=%%d&productid=%%d&versionuniqueid=%%s&distid=%%d&uniqueid=%%s&gamename=%%s", url);
-	patchDWord(0x005ffd05 + 1, motd);
+	//char *motd = allocOnlineServiceString("http://motd.%s/motd/motd.asp?userid=%%d&productid=%%d&versionuniqueid=%%s&distid=%%d&uniqueid=%%s&gamename=%%s", url);
+	//patchDWord(0x005ffd05 + 1, motd);
 
 	// peerchat.gamespy.com
 	char *peerchat = allocOnlineServiceString("peerchat.%s", url);
-	patchDWord(0x00605a4c + 1, peerchat);
-	patchDWord(0x00605aac + 1, peerchat);
-	patchDWord(0x00605b0e + 1, peerchat);
+	patchDWord(0x005d560c + 1, peerchat);
+	patchDWord(0x005d566c + 1, peerchat);
+	patchDWord(0x005d56ce + 1, peerchat);
 
 	// %s.ms%d.gamespy.com
 	char *ms = allocOnlineServiceString("%%s.ms%%d.%s", url);
-	patchDWord(0x00612085 + 1, ms);
+	patchDWord(0x005e1c35 + 1, ms);
 
 	// gpcm.gamespy.com
 	char *gpcm = allocOnlineServiceString("gpcm.%s", url);
-	patchDWord(0x00617339 + 1, gpcm);
+	patchDWord(0x005e4569 + 1, gpcm);
 
 	// gpsp.gamespy.com
 	char *gpsp = allocOnlineServiceString("gpsp.%s", url);
-	patchDWord(0x006182bd + 1, gpsp);
+	patchDWord(0x005e54ed + 1, gpsp);
 }
