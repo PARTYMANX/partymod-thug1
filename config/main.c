@@ -1212,7 +1212,7 @@ void loadSettings() {
 	settings.ps2_controls = getIniBool("Miscellaneous", "UsePS2Controls", 1, configFile);
 	settings.glyph_style = GetPrivateProfileInt("Miscellaneous", "GlyphStyle", 1, configFile);
 	settings.prefer_glyphs = getIniBool("Miscellaneous", "PreferGlyphs", 0, configFile);
-	settings.disable_blur = getIniBool("Miscellaneous", "DisableBlur", 1, configFile);
+	settings.disable_blur = getIniBool("Graphics", "DisableBlur", 1, configFile);
 
 	keybinds.ollie = GetPrivateProfileInt("Keybinds", "Ollie", SDL_SCANCODE_KP_2, configFile);
 	keybinds.grab = GetPrivateProfileInt("Keybinds", "Grab", SDL_SCANCODE_KP_6, configFile);
@@ -1291,7 +1291,7 @@ void saveSettings() {
 	writeIniBool("Miscellaneous", "UsePS2Controls", settings.ps2_controls, configFile);
 	writeIniInt("Miscellaneous", "GlyphStyle", settings.glyph_style, configFile);
 	writeIniBool("Miscellaneous", "PreferGlyphs", settings.prefer_glyphs, configFile);
-	writeIniBool("Miscellaneous", "DisableBlur", settings.disable_blur, configFile);
+	writeIniBool("Graphics", "DisableBlur", settings.disable_blur, configFile);
 
 	writeIniInt("Keybinds", "Ollie", keybinds.ollie, configFile);
 	writeIniInt("Keybinds", "Grab", keybinds.grab, configFile);

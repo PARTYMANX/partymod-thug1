@@ -132,8 +132,8 @@ void setLetterbox(int isLetterboxed) {
 		*conv_y_offset = (16 * *conv_y_multiplier) + ((*backbuffer_height - height) / 2);
 	}
 
-	printf("MULT X: %f, MULT Y: %f\n", *conv_x_multiplier, *conv_y_multiplier);
-	printf("OFFSET X: %d, OFFSET Y: %d\n", *conv_x_offset, *conv_y_offset);
+	//printf("MULT X: %f, MULT Y: %f\n", *conv_x_multiplier, *conv_y_multiplier);
+	//printf("OFFSET X: %d, OFFSET Y: %d\n", *conv_x_offset, *conv_y_offset);
 
 	//*letterbox_active = isLetterboxed;
 }
@@ -207,20 +207,20 @@ void drawBlackBars() {
 		setVertexShader(0x44);
 
 		struct blackBarVertex blackBar[4] = {
-			{0.0f, 0.0f, 0.0f, 1.0f, 0xff000000, 0.0f, 0.0f},
-			{0.0f, *backbuffer_height, 0.0f, 1.0f, 0xff000000, 0.0f, 0.0f},
-			{barwidth, *backbuffer_height, 0.0f, 1.0f, 0xff000000, 0.0f, 0.0f},
-			{barwidth, 0.0f, 0.0f, 1.0f, 0xff000000, 0.0f, 0.0f},
+			{-0.5f, -0.5f, 0.0f, 1.0f, 0xff000000, 0.0f, 0.0f},
+			{-0.5f, *backbuffer_height + 0.5f, 0.0f, 1.0f, 0xff000000, 0.0f, 0.0f},
+			{barwidth + 0.5f, *backbuffer_height + 0.5f, 0.0f, 1.0f, 0xff000000, 0.0f, 0.0f},
+			{barwidth + 0.5f, -0.5f, 0.0f, 1.0f, 0xff000000, 0.0f, 0.0f},
 		};
 
-		IDirect3DDevice9_DrawPrimitiveUP(*(IDirect3DDevice9 **)0x007cec6c, D3DPT_TRIANGLEFAN, 4, blackBar, sizeof(struct blackBarVertex));
+		IDirect3DDevice9_DrawPrimitiveUP(*(IDirect3DDevice9 **)0x007cec6c, D3DPT_TRIANGLEFAN, 2, blackBar, sizeof(struct blackBarVertex));
 
 		blackBar[0].x += width + barwidth;
 		blackBar[1].x += width + barwidth;
 		blackBar[2].x += width + barwidth;
 		blackBar[3].x += width + barwidth;
 
-		IDirect3DDevice9_DrawPrimitiveUP(*(IDirect3DDevice9 **)0x007cec6c, D3DPT_TRIANGLEFAN, 4, blackBar, sizeof(struct blackBarVertex));
+		IDirect3DDevice9_DrawPrimitiveUP(*(IDirect3DDevice9 **)0x007cec6c, D3DPT_TRIANGLEFAN, 2, blackBar, sizeof(struct blackBarVertex));
 	} else if (backbufferAspect < getDesiredAspectRatio()) {
 		uint32_t height = round((*conv_y_multiplier) * 480.0f);
 		uint32_t barheight = (*backbuffer_height - height) / 2;
@@ -229,22 +229,21 @@ void drawBlackBars() {
 		setVertexShader(0x44);
 
 		struct blackBarVertex blackBar[4] = {
-			{0.0f, 0.0f, 0.0f, 1.0f, 0xff000000, 0.0f, 0.0f},
-			{0.0f, barheight, 0.0f, 1.0f, 0xff000000, 0.0f, 0.0f},
-			{*backbuffer_width, barheight, 0.0f, 1.0f, 0xff000000, 0.0f, 0.0f},
-			{*backbuffer_width, 0.0f, 0.0f, 1.0f, 0xff000000, 0.0f, 0.0f},
+			{-0.5f, -0.5f, 0.0f, 1.0f, 0xff000000, 0.0f, 0.0f},
+			{-0.5f, barheight + 0.5f, 0.0f, 1.0f, 0xff000000, 0.0f, 0.0f},
+			{*backbuffer_width + 0.5f, barheight + 0.5f, 0.0f, 1.0f, 0xff000000, 0.0f, 0.0f},
+			{*backbuffer_width + 0.5f, -0.5f, 0.0f, 1.0f, 0xff000000, 0.0f, 0.0f},
 		};
 
-		IDirect3DDevice9_DrawPrimitiveUP(*(IDirect3DDevice9 **)0x007cec6c, D3DPT_TRIANGLEFAN, 4, blackBar, sizeof(struct blackBarVertex));
+		IDirect3DDevice9_DrawPrimitiveUP(*(IDirect3DDevice9 **)0x007cec6c, D3DPT_TRIANGLEFAN, 2, blackBar, sizeof(struct blackBarVertex));
 
 		blackBar[0].y += height + barheight;
 		blackBar[1].y += height + barheight;
 		blackBar[2].y += height + barheight;
 		blackBar[3].y += height + barheight;
 
-		IDirect3DDevice9_DrawPrimitiveUP(*(IDirect3DDevice9 **)0x007cec6c, D3DPT_TRIANGLEFAN, 4, blackBar, sizeof(struct blackBarVertex));
+		IDirect3DDevice9_DrawPrimitiveUP(*(IDirect3DDevice9 **)0x007cec6c, D3DPT_TRIANGLEFAN, 2, blackBar, sizeof(struct blackBarVertex));
 	}
-	
 }
 
 void patchLetterbox() {
