@@ -954,6 +954,7 @@ struct settings {
 
 	int ps2_controls;
 	int glyph_style;
+	int prefer_glyphs;
 	int disable_blur;
 };
 
@@ -1120,6 +1121,7 @@ void defaultSettings() {
 	
 	settings.ps2_controls = 1;
 	settings.glyph_style = 1;
+	settings.prefer_glyphs = 0;
 	settings.disable_blur = 1;
 
 	keybinds.ollie = SDL_SCANCODE_KP_2;
@@ -1209,6 +1211,7 @@ void loadSettings() {
 
 	settings.ps2_controls = getIniBool("Miscellaneous", "UsePS2Controls", 1, configFile);
 	settings.glyph_style = GetPrivateProfileInt("Miscellaneous", "GlyphStyle", 1, configFile);
+	settings.prefer_glyphs = getIniBool("Miscellaneous", "PreferGlyphs", 0, configFile);
 	settings.disable_blur = getIniBool("Miscellaneous", "DisableBlur", 1, configFile);
 
 	keybinds.ollie = GetPrivateProfileInt("Keybinds", "Ollie", SDL_SCANCODE_KP_2, configFile);
@@ -1287,6 +1290,7 @@ void saveSettings() {
 
 	writeIniBool("Miscellaneous", "UsePS2Controls", settings.ps2_controls, configFile);
 	writeIniInt("Miscellaneous", "GlyphStyle", settings.glyph_style, configFile);
+	writeIniBool("Miscellaneous", "PreferGlyphs", settings.prefer_glyphs, configFile);
 	writeIniBool("Miscellaneous", "DisableBlur", settings.disable_blur, configFile);
 
 	writeIniInt("Keybinds", "Ollie", keybinds.ollie, configFile);
@@ -1894,6 +1898,7 @@ struct general_page {
 	pgui_control *ps2_controls;
 	pgui_control *glyph_style_label;
 	pgui_control *glyph_style;
+	pgui_control *prefer_glyphs;
 	pgui_control *disable_blur;
 	pgui_control *disable_blur_hint;
 };
@@ -2014,7 +2019,8 @@ void build_general_page(pgui_control *parent) {
 	general_page.ps2_controls = pgui_checkbox_create(8, 16, 128, 24, "Use PS2 Controls", misc_groupbox);
 	general_page.glyph_style_label = pgui_label_create(8, 16 + 28, 96, 16, "Button Glyph Set:", PGUI_LABEL_JUSTIFY_LEFT, misc_groupbox);
 	general_page.glyph_style = pgui_combobox_create(8 + 96, 16 + 24, 64, 24, uicontrol_options, 3, misc_groupbox);
-	general_page.disable_blur = pgui_checkbox_create(8, 16 + (24 * 2), 128, 24, "Disable Blur Effect*", misc_groupbox);
+	general_page.prefer_glyphs = pgui_checkbox_create(8, 16 + (24 * 2), 128, 24, "Prefer Controller Glyphs", misc_groupbox);
+	general_page.disable_blur = pgui_checkbox_create(8, 16 + (24 * 3), 128, 24, "Disable Blur Effect*", misc_groupbox);
 	general_page.disable_blur_hint = pgui_label_create(8, misc_groupbox->h - 64, misc_groupbox->w - 16, 56, "* Workaround for severe artifacts seen on many GPU drivers. The effect may work if the game is run through DXVK", PGUI_LABEL_JUSTIFY_LEFT, misc_groupbox);
 
 	pgui_checkbox_set_on_toggle(general_page.windowed, do_setting_checkbox, &(settings.windowed));
@@ -2028,6 +2034,7 @@ void build_general_page(pgui_control *parent) {
 
 	pgui_checkbox_set_on_toggle(general_page.ps2_controls, do_setting_checkbox, &(settings.ps2_controls));
 	pgui_combobox_set_on_select(general_page.glyph_style, set_menu_combobox, &(settings.glyph_style));
+	pgui_checkbox_set_on_toggle(general_page.prefer_glyphs, do_setting_checkbox, &(settings.prefer_glyphs));
 	pgui_checkbox_set_on_toggle(general_page.disable_blur, do_setting_checkbox, &(settings.disable_blur));
 
 	pgui_combobox_set_on_select(general_page.resolution_combobox, set_display_mode, NULL);
@@ -2105,6 +2112,7 @@ void update_general_page() {
 
 	pgui_checkbox_set_checked(general_page.ps2_controls, settings.ps2_controls);
 	pgui_combobox_set_selection(general_page.glyph_style, settings.glyph_style);
+	pgui_checkbox_set_checked(general_page.prefer_glyphs, settings.prefer_glyphs);
 	pgui_checkbox_set_checked(general_page.disable_blur, settings.disable_blur);
 }
 

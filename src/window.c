@@ -15,10 +15,8 @@
 #include <SDL2/SDL_syswm.h>
 
 // there has got to be a better way to write this
-//uint8_t *isFullscreen = 0x00858da7;
 HWND *hwnd = 0x007cec88;
 int *isFocused = 0x00768fa9;
-//int *other_isFocused = 0x0072e850;
 uint32_t *resolution_setting = 0x007d0e08;
 uint8_t *addr_recreatedevice = 0x0072de00;
 

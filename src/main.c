@@ -43,36 +43,31 @@ void patchPlaylistShuffle() {
 	patchCall(addr_shuffle2, our_random);
 }
 
-/*uint32_t __fastcall calcAvailableSpaceFudged(uint8_t *param1) {
-	uint32_t *pTotalSpace = 0x0068ec38;
+uint32_t __fastcall calcAvailableSpaceFudged(uint8_t *param1) {
 	if (*(param1 + 0xc)) {
-		uint64_t freeSpace = 0;
-		uint64_t totalSpace = 0;
-		GetDiskFreeSpaceEx(NULL, &freeSpace, &totalSpace, NULL);
+		ULARGE_INTEGER freeSpace;
+		ULARGE_INTEGER totalSpace;
+		uint8_t result = GetDiskFreeSpaceEx(NULL, &freeSpace, &totalSpace, NULL);
 
+		if (result) {
+			uint64_t space = freeSpace.QuadPart >> 14;
 
-	} else {
-		return 0;
-	}
-}*/
+			if (space > UINT32_MAX - (UINT16_MAX * 2)) {
+				space = UINT32_MAX - (UINT16_MAX * 2);	// clamp to a number that should fit anything and allow a bit of math (number from ClownJob'd release notes)
+			}
 
-// 00569081
-float clampedAcos(float in) {
-	float (*orig_acos)(float) = 0x005f88d0;
-
-	if (in > 1.0f) {
-		in = 1.0f;
-	} else if (in < -1.0f) {
-		in = -1.0f;
+			return space;
+		}
 	}
 
-	return orig_acos(in);
+	return 0;
+}
+
+void patchCalcAvailableSpace() {
+	patchCall(0x0052dcae, calcAvailableSpaceFudged);
 }
 
 double ledgeWarpFix(double n) {
-	//printf("DOING LEDGE WARP FIX\n");
-	//double (__cdecl *orig_acos)(double) = (void *)0x005f88d0;
-
 	__asm {
 		sub esp,0x08
 		fst qword ptr [esp - 0x08]
@@ -103,8 +98,6 @@ double ledgeWarpFix(double n) {
 	}
 
 	callFunc(0x005f88d0);
-
-	//return orig_acos(n);
 }
 
 void patchSnapDown() {
@@ -234,6 +227,7 @@ __declspec(dllexport) BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, L
 			patchScriptHook();
 			patchPlaylistShuffle();
 			patchSnapDown();
+			patchCalcAvailableSpace();
 
 			break;
 

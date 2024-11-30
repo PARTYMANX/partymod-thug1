@@ -6,6 +6,8 @@
 #include <patch.h>
 #include <input.h>
 
+uint8_t forceGlyphs = 0;
+
 char *buttonsPs2 = "ButtonsPs2";
 char *buttonsNgc = "ButtonsNgc";
 char *meta_button_map_ps2 = "meta_button_map_ps2";
@@ -16,7 +18,7 @@ char *meta_button_map_gamecube = "meta_button_map_gamecube";
 uint32_t dehexifyDigitWrapper(uint8_t *button) {
 	uint32_t (*orig_dehexify)(uint8_t *) = 0x00401e40;
 
-	if (getUsingKeyboard()) {
+	if (getUsingKeyboard() && !forceGlyphs) {
 		return orig_dehexify(button);
 	} else {
 		uint8_t val = *button;
@@ -52,19 +54,20 @@ uint32_t dehexifyDigitWrapper(uint8_t *button) {
 }
 
 uint8_t __cdecl shouldUseGlyph(uint8_t idx) {
-	if (getUsingKeyboard()) {
+	if (getUsingKeyboard() && !forceGlyphs) {
 		return idx >= 0x04 && idx <= 0x0D;
 	} else {
 		return idx <= 17;
 	}
 }
 
-uint8_t getGlyphStyleSetting() {
+uint8_t getGlyphConfig() {
+	forceGlyphs = getConfigBool(CONFIG_MISC_SECTION, "PreferGlyphs", 0);
 	return getConfigInt(CONFIG_MISC_SECTION, "GlyphStyle", 1);
 }
 
 void patchButtonGlyphs() {
-	uint8_t glyphStyle = getGlyphStyleSetting();
+	uint8_t glyphStyle = getGlyphConfig();
 
 	// load the appropriate glyph font and meta button map for glyph style (this only affects the basic menu control prompts)
 	if (glyphStyle == 1) {
