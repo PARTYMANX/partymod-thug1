@@ -900,11 +900,13 @@ void do_key_input(SDL_KeyCode key) {
 }
 
 void do_text_input(char *text) {
-	if (strlen(text) == 1) {
-		key_input(text[0], 0);
-	} else {
-		log_printf(LL_DEBUG, "Input text '%s' > 1 byte!!\n");
-	}	
+	if (*addr_isKeyboardOnScreen) {
+		if (strlen(text) == 1) {
+			key_input(text[0], 0);
+		} else {
+			log_printf(LL_DEBUG, "Input text '%s' > 1 byte!!\n");
+		}	
+	}
 }
 
 void handleInputEvent(SDL_Event *e) {
