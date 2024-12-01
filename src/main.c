@@ -43,7 +43,7 @@ void patchPlaylistShuffle() {
 	patchCall(addr_shuffle2, our_random);
 }
 
-uint32_t __fastcall calcAvailableSpaceFudged(uint8_t *param1) {
+int32_t __fastcall calcAvailableSpaceFudged(uint8_t *param1) {
 	if (*(param1 + 0xc)) {
 		ULARGE_INTEGER freeSpace;
 		ULARGE_INTEGER totalSpace;
@@ -52,8 +52,8 @@ uint32_t __fastcall calcAvailableSpaceFudged(uint8_t *param1) {
 		if (result) {
 			uint64_t space = freeSpace.QuadPart >> 14;
 
-			if (space > UINT32_MAX - (UINT16_MAX * 2)) {
-				space = UINT32_MAX - (UINT16_MAX * 2);	// clamp to a number that should fit anything and allow a bit of math (number from ClownJob'd release notes)
+			if (space > INT32_MAX - (UINT16_MAX * 2)) {
+				space = INT32_MAX - (UINT16_MAX * 2);	// clamp to a number that should fit anything and allow a bit of math (number from ClownJob'd release notes)
 			}
 
 			return space;
@@ -200,6 +200,15 @@ void getModuleInfo() {
 	mod_size = (uint32_t)end_addr - (uint32_t)base_addr;
 }
 
+void fastExit() {
+	exit(0);
+}
+
+// we don't care about cleanup, the OS can handle that. so patch the function immediately after the main loop to call exit to skip cleanup
+void patchFastExit() {
+	patchCall(0x004bff1e, fastExit);
+}
+
 void networkParamsWrapper() {
 	void (__cdecl *orig_networkParams)() = 0x004c00d0;
 
@@ -228,6 +237,7 @@ __declspec(dllexport) BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, L
 			patchPlaylistShuffle();
 			patchSnapDown();
 			patchCalcAvailableSpace();
+			patchFastExit();
 
 			break;
 

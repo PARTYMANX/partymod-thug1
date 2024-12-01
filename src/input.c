@@ -623,13 +623,13 @@ void pollKeyboard(device *dev) {
 	}
 
 	// buttons
-	if (getKeyState(keyboardState, keybinds.menu)) {	// NOTE: menu is also always hardcoded to esc
+	if (getKeyState(keyboardState, keybinds.menu)) {
 		dev->controlData[2] |= 0x01 << 3;
 	}
 	if (getKeyState(keyboardState, keybinds.cameraToggle)) {
 		dev->controlData[2] |= 0x01 << 0;
 	}
-	if (getKeyState(keyboardState, keybinds.focus)) {	// no control for left stick on keyboard
+	if (getKeyState(keyboardState, keybinds.focus)) {
 		dev->controlData[2] |= 0x01 << 1;
 	}
 	if (getKeyState(keyboardState, keybinds.cameraSwivelLock)) {
@@ -710,7 +710,7 @@ void pollKeyboard(device *dev) {
 		dev->controlData[9] = 0xFF;
 	}
 
-	// sticks - NOTE: because these keys are very rarely used/important, SOCD handling is just to cancel
+	// sticks - NOTE: SOCD handling is just to cancel
 	// right
 	// x
 	if (getKeyState(keyboardState, keybinds.cameraLeft) && !getKeyState(keyboardState, keybinds.cameraRight)) {
@@ -744,6 +744,19 @@ void pollKeyboard(device *dev) {
 	if (getKeyState(keyboardState, keybinds.down) && !getKeyState(keyboardState, keybinds.up)) {
 		dev->controlData[7] = 255;
 	}
+}
+
+// EXTREME HACK: keep pause buffer behavior for speedrunning
+// when transitioning from menu to game and pause is held, pulse off for one frame
+// this only applies to controller at the moment, the bind switching makes it a bit too complex for keyboard while not breaking the CAS menu
+uint8_t prev_in_menu_pause_buffer = 0;
+
+void doPauseBuffer(device *dev) {
+	if (isInMenu == 0 && prev_in_menu_pause_buffer == 1) {
+		dev->controlData[2] &= ~(0x01 << 3);
+	}
+
+	prev_in_menu_pause_buffer = isInMenu;
 }
 
 void __fastcall processController(device *dev, void *pad, device *also_dev) {
@@ -814,6 +827,8 @@ void __fastcall processController(device *dev, void *pad, device *also_dev) {
 			pollController(dev, players[dev->port].controller);
 		}
 	}
+
+	doPauseBuffer(dev);
 
 	dev->controlData[2] = ~dev->controlData[2];
 	dev->controlData[3] = ~dev->controlData[3];
