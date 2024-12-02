@@ -585,25 +585,25 @@ void processMenuBinds(uint8_t *keyStates) {
 uint8_t getKeyState(uint8_t *keyStates, uint8_t key) {
 	switch (key) {
 	case SDL_SCANCODE_RETURN:
-		return menuKeyStates.affirmative != LOCKOUT && keyStates[key];
+		return menuKeyStates.affirmative != LOCKOUT && (!isInMenu && keyStates[key]);
 	case SDL_SCANCODE_ESCAPE:
-		return menuKeyStates.negative != LOCKOUT && keyStates[key];
+		return menuKeyStates.negative != LOCKOUT && (!isInMenu && keyStates[key]);
 	case SDL_SCANCODE_E:
-		return menuKeyStates.menu != LOCKOUT && keyStates[key];
+		return menuKeyStates.menu != LOCKOUT && (!isInMenu && keyStates[key]);
 	case SDL_SCANCODE_R:
-		return menuKeyStates.extra != LOCKOUT && keyStates[key];
+		return menuKeyStates.extra != LOCKOUT && (!isInMenu && keyStates[key]);
 	case SDL_SCANCODE_UP:
-		return menuKeyStates.up != LOCKOUT && keyStates[key];
+		return menuKeyStates.up != LOCKOUT && (!isInMenu && keyStates[key]);
 	case SDL_SCANCODE_DOWN:
-		return menuKeyStates.down != LOCKOUT && keyStates[key];
+		return menuKeyStates.down != LOCKOUT && (!isInMenu && keyStates[key]);
 	case SDL_SCANCODE_LEFT:
-		return menuKeyStates.left != LOCKOUT && keyStates[key];
+		return menuKeyStates.left != LOCKOUT && (!isInMenu && keyStates[key]);
 	case SDL_SCANCODE_RIGHT:
-		return menuKeyStates.right != LOCKOUT && keyStates[key];
+		return menuKeyStates.right != LOCKOUT && (!isInMenu && keyStates[key]);
 	case SDL_SCANCODE_1:
-		return menuKeyStates.rot_left != LOCKOUT && keyStates[key];
+		return menuKeyStates.rot_left != LOCKOUT && (!isInMenu && keyStates[key]);
 	case SDL_SCANCODE_2:
-		return menuKeyStates.rot_right != LOCKOUT && keyStates[key];
+		return menuKeyStates.rot_right != LOCKOUT && (!isInMenu && keyStates[key]);
 	default:
 		return keyStates[key];
 	}
@@ -1158,12 +1158,12 @@ uint8_t __cdecl isPs2Wrapper_DD(uint8_t *idk, uint8_t *script) {
 	uint32_t scriptcrc = 0;
 
 	if (script) {
-		scriptcrc = *(uint32_t *)(script + 0xd8);
+		scriptcrc = *(uint32_t *)(script + 0xbc);
 		//printf("ISPS2 FROM 0x%08x!\n", scriptcrc);
 
-		//printf("ISPS2 FROM 0x%08x 0x%08x 0x%08x 0x%08x 0x%08x!\n", *(uint32_t *)(script + 0xd0), *(uint32_t *)(script + 0xd4), *(uint32_t *)(script + 0xd8), *(uint32_t *)(script + 0xc4), *(uint32_t *)(script + 0xc0));
+		//printf("ISPS2 FROM 0x%08x 0x%08x 0x%08x 0x%08x 0x%08x!\n", *(uint32_t *)(script + 0xb0), *(uint32_t *)(script + 0xb4), *(uint32_t *)(script + 0xb8), *(uint32_t *)(script + 0xbc), *(uint32_t *)(script + 0xac));
 		// detect grindscripts
-		if (scriptcrc == 0x56181c77) {
+		if (scriptcrc == 0x255ed86f) {
 			return 1;
 		}
 	}
