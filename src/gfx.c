@@ -10,7 +10,7 @@
 
 uint8_t *antialiasing = 0x007d0e00;
 uint8_t *hq_shadows = 0x007d0e01;
-uint32_t *distance_clipping = 0x007d0e06;
+uint8_t *distance_clipping = 0x007d0e06;
 uint32_t *clipping_distance = 0x007d0e10;	// int from 1-100
 uint8_t *fog = 0x007d0e02;
 uint8_t *addr_setaspectratio = 0x00485050;

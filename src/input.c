@@ -749,14 +749,20 @@ void pollKeyboard(device *dev) {
 // EXTREME HACK: keep pause buffer behavior for speedrunning
 // when transitioning from menu to game and pause is held, pulse off for one frame
 // this only applies to controller at the moment, the bind switching makes it a bit too complex for keyboard while not breaking the CAS menu
-uint8_t prev_in_menu_pause_buffer = 0;
+uint8_t prev_menu_button_pause_buffer = 0;
 
 void doPauseBuffer(device *dev) {
-	if (isInMenu == 0 && prev_in_menu_pause_buffer == 1) {
+	uint8_t buttonPressed = (dev->controlData[2] & (0x01 << 3)) != 0;
+
+	if (isInMenu == 1 && buttonPressed && prev_menu_button_pause_buffer == 1) {
 		dev->controlData[2] &= ~(0x01 << 3);
 	}
 
-	prev_in_menu_pause_buffer = isInMenu;
+	if (isInMenu && buttonPressed) {
+		prev_menu_button_pause_buffer = 1;
+	} else {
+		prev_menu_button_pause_buffer = 0;
+	}
 }
 
 void __fastcall processController(device *dev, void *pad, device *also_dev) {
@@ -828,7 +834,9 @@ void __fastcall processController(device *dev, void *pad, device *also_dev) {
 		}
 	}
 
-	doPauseBuffer(dev);
+	if (dev->port == 0) {
+		doPauseBuffer(dev);
+	}
 
 	dev->controlData[2] = ~dev->controlData[2];
 	dev->controlData[3] = ~dev->controlData[3];
