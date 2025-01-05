@@ -1325,12 +1325,14 @@ void patchPs2Buttons() {
 
 	// walk acid drop
 	patchNop((void *)(addr_r2l2_walk_acid1), 6);
-	patchByte((void *)(addr_r2l2_walk_acid1), 0x75);
-	patchByte((void *)(addr_r2l2_walk_acid1 + 1), 0x0b);
+	// don't check nollie! that's used to center view and isn't used to acid drop!
+	//patchByte((void *)(addr_r2l2_walk_acid1), 0x75);
+	//patchByte((void *)(addr_r2l2_walk_acid1 + 1), 0x0b);
 
 	patchNop((void *)(addr_r2l2_walk_acid2), 6);
-	patchByte((void *)(addr_r2l2_walk_acid2), 0x75);
-	patchByte((void *)(addr_r2l2_walk_acid2 + 1), 0x0b);
+	// don't check nollie! that's used to center view and isn't used to acid drop!
+	//patchByte((void *)(addr_r2l2_walk_acid2), 0x75);
+	//patchByte((void *)(addr_r2l2_walk_acid2 + 1), 0x0b);
 
 	// disable spin delay on l1/r1
 	//patchNop((void *)(addr_spin_delay1), 2);
