@@ -47,11 +47,11 @@ void writeConfigValues() {
 }
 
 uint8_t getCurrentLevel() {
-	uint8_t **skate = (uint8_t *)0x007ce478;
+	uint8_t **skate = (uint8_t *)0x0076a788;
 
 	if (*skate) {
 		uint8_t **career = *skate + 0x20;
-		return *(*career + 0x630);
+		return *(*career + 0x5c4);
 	} else {
 		return 0;
 	}
@@ -168,10 +168,10 @@ void setDisplayRegion() {
 }
 
 void renderWorldWrapper() {
-	void (*renderWorld)() = 0x0048c330;
+	void (*renderWorld)() = 0x00477b40;
 	renderWorld();
 
-	uint8_t *letterbox_active = 0x00786cbe;
+	uint8_t *letterbox_active = 0x0072df3e;
 
 	if (getCurrentLevel() == 0) {
 		if (*letterbox_active != 1) {
@@ -266,7 +266,7 @@ void patchLetterbox() {
 	patchCall(0x00497f99, setDisplayRegion);
 
 	// hacky: wrap render world in main loop with something to set letterbox if needed
-	//patchCall(0x0044f1c0, renderWorldWrapper);
+	patchCall(0x00421bc8, renderWorldWrapper);
 
 	patchCall(0x004980c9, drawBlackBars);
 }
