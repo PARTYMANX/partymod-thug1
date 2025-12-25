@@ -167,23 +167,37 @@ void setDisplayRegion() {
 	*display_height = height;
 }
 
+uint8_t menu_letterbox = 0;
+uint8_t old_letterbox = 0;
+
 void renderWorldWrapper() {
 	void (*renderWorld)() = 0x00477b40;
 	renderWorld();
 
 	uint8_t *letterbox_active = 0x0072df3e;
 
+	// force letterbox on if we're on the main menu
 	if (getCurrentLevel() == 0) {
-		if (*letterbox_active != 1) {
-			setLetterbox(1);
+		if (!menu_letterbox) {
+			menu_letterbox = 1;
+			old_letterbox = *letterbox_active;
+			if (*letterbox_active != 1) {
+				setLetterbox(1);
+			}
+		} else {
+			if (*letterbox_active != old_letterbox) {
+				old_letterbox = *letterbox_active;
+				setLetterbox(1);
+			}
 		}
 	} else {
-		// NOTE: the only reason we can't leave this on is because it breaks split screen in a very funny way (both screens render on top of each other and share a depth buffer)
-		if (*letterbox_active != 0) {
-			setLetterbox(0);
+		if (menu_letterbox) {
+			menu_letterbox = 0;
+			if (*letterbox_active != old_letterbox) {
+				setLetterbox(old_letterbox);
+			}
 		}
 	}
-	
 }
 
 #include <d3d9.h>
