@@ -184,11 +184,6 @@ void renderWorldWrapper() {
 			if (*letterbox_active != 1) {
 				setLetterbox(1);
 			}
-		} else {
-			if (*letterbox_active != old_letterbox) {
-				old_letterbox = *letterbox_active;
-				setLetterbox(1);
-			}
 		}
 	} else {
 		if (menu_letterbox) {
